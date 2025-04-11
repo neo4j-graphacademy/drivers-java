@@ -1,0 +1,37 @@
+{
+	"name": "Building Neo4j Applications with Spring Data Neo4j",
+	"image": "mcr.microsoft.com/devcontainers/java:1-21-bullseye",
+	"features": {
+		"ghcr.io/devcontainers/features/java:1": {
+			"installMaven": true,
+			"version": "21",
+			"jdkDistro": "open",
+			"mavenVersion": "3.9.9"
+		}
+	},
+	"forwardPorts": [
+		8080
+		],
+	"portsAttributes": {
+		"8080": {
+		"label": "Application",
+		"onAutoForward": "openPreview"
+		}
+	},
+	"postCreateCommand": "bash .devcontainer/post_create.sh",
+	"customizations": {
+		"codespaces": {
+			"openFiles": [
+				"SETUP.md",
+				"src/main/resources/application.properties",
+				"test/java/com/example/appspringdata/AppStringDataApplicationTests.java"
+				]
+		},
+		"vscode": {
+			"extensions": [
+				"vmware.vscode-spring-boot",
+				"vscjava.vscode-java-pack"
+				]
+		}
+	}
+}

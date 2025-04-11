@@ -1,0 +1,13 @@
+= Using Neo4j with Java
+
+This repository accompanies the link:https://graphacademy.neo4j.com/courses/drivers-java[Using Neo4j with Java^] on link:https://graphacademy.neo4j.com/courses[GraphAcademy^].
+
+For a complete walkthrough of this repository, link:https://graphacademy.neo4j.com/courses/drivers-java[enroll now^].
+
+== Install
+
+./mvnw clean install -U -DskipTests
+
+== Run
+
+./mvnw compile exec:java -Dexec.mainClass="com.neo4j.app.App"
