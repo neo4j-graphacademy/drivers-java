@@ -2,6 +2,7 @@ package com.neo4j.app;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 import org.neo4j.driver.summary.ResultSummary;
 // Import Neo4j
@@ -9,6 +10,7 @@ import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.QueryConfig;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Result;
+import org.neo4j.driver.Record;
 
 import org.neo4j.driver.RoutingControl;
 
@@ -189,17 +191,17 @@ public class Testing {
         // System.out.println(keys);
 
 
-        try (var session = driver.session()) {
-            var result = session.executeWrite(
-                tx -> getCheapestFlights(
-                    tx, 
-                    "2024-01-01", 
-                    "LAX",
-                    "SFO"
-                    )
-                );
-            var records = result.list();
-        }
+        // try (var session = driver.session()) {
+        //     var result = session.executeWrite(
+        //         tx -> getCheapestFlights(
+        //             tx, 
+        //             "2024-01-01", 
+        //             "LAX",
+        //             "SFO"
+        //             )
+        //         );
+        //     var records = result.list();
+        // }
 
 
         driver.close();
@@ -211,7 +213,7 @@ public class Testing {
         return result.consume();
     }
 
-    public static Result getCheapestFlights(
+    public static List<Record> getCheapestFlights(
         TransactionContext tx, 
         String date, 
         String origin, 
@@ -224,7 +226,7 @@ public class Testing {
             RETURN f.price AS price, operator.name AS operator
             """, Map.of("date", date, "origin", origin, "destination", destination));
 
-        return result;
+        return result.list();
     }
 
     // public static int createPerson(TransactionContext tx, String name, int age) {
