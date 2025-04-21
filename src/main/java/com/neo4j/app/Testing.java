@@ -15,10 +15,17 @@ import org.neo4j.driver.Record;
 import org.neo4j.driver.RoutingControl;
 
 import org.neo4j.driver.TransactionContext;
-
+import org.neo4j.driver.Values;
+import org.neo4j.driver.exceptions.Neo4jException;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
 import org.neo4j.driver.types.Path;
+
+import java.time.ZonedDateTime;
+import java.time.ZoneId;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class Testing {
     public static void main(String[] args) {
@@ -203,6 +210,157 @@ public class Testing {
         //     var records = result.list();
         // }
 
+        // String dtstring="2024-05-15T14:30:00+02:00";
+        // var datetime = ZonedDateTime.of(2024, 05, 15, 14, 30, 00, 0, ZoneId.of("+02:00"));
+
+        // var result = driver.executableQuery("""
+        //     CREATE (e:Event {
+        //       startsAt: $datetime,              // <1>
+        //       createdAt: datetime($dtstring),   // <2>
+        //       updatedAt: datetime()             // <3>
+        //       })
+        //       RETURN e.startsAt AS startsAt,
+        //       e.createdAt AS createdAt,
+        //       e.updatedAt AS updatedAt;
+        //     """)
+        //     .withParameters(Map.of("datetime", datetime, "dtstring", dtstring))
+        //     .execute();
+
+        // var event = result.records().get(0);
+        // var startsAt = event.get("startsAt").asZonedDateTime();
+        // var createdAt = event.get("createdAt").asZonedDateTime();
+        // var updatedAt = event.get("updatedAt").asZonedDateTime();
+        // System.out.println(startsAt);  // 2024-05-15T14:30+02:00
+        // System.out.println(createdAt); // 2024-05-15T14:30+02:00
+        // System.out.println(updatedAt); // today's date and time with +00:00 timezone
+
+        // var result = driver.executableQuery("""
+        //         RETURN date() as date, time() as time, 
+        //             datetime() as datetime, 
+        //             toString(datetime()) as asString;
+        //         """)
+        //         .execute();
+
+        // // Loop through results and do something with them
+        // var records = result.records();
+        // records.forEach(r -> {
+        //     System.out.println(r.get("date"));      // neo4j.time.Date
+        //     System.out.println(r.get("time"));      // neo4j.time.Time
+        //     System.out.println(r.get("datetime"));  // neo4j.time.DateTime
+        //     System.out.println(r.get("asString"));  // String
+        // });
+
+        // // Create variables with duration and duration calculation
+        // var startsAt = LocalDateTime.now();
+        // var eventLength = Duration.ofHours(1).plusMinutes(30);
+        // var endsAt = startsAt.plus(eventLength);
+
+        // var result = driver.executableQuery("""
+        //     CREATE (e:Event {
+        //       startsAt: $startsAt, 
+        //       endsAt: $endsAt,
+        //       duration: $eventLength, // <1>
+        //       interval: duration("PT1H30M") // <2>
+        //     })
+        //     RETURN e
+        //     """)
+        //     .withParameters(Map.of(
+        //         "startsAt", startsAt,
+        //         "endsAt", endsAt,
+        //         "eventLength", eventLength
+        //     ))
+        //     .execute();
+
+        // // Output results
+        // var event = result.records().get(0).get("e").asNode();
+        // System.out.println(event.get("startsAt")); // current datetime
+        // System.out.println(event.get("endsAt"));   // current datetime + 1h 30m
+        // System.out.println(event.get("duration")); // P0M0DT5400S (1h 30m in seconds)
+        // System.out.println(event.get("interval")); // P0M0DT5400S (1h 30m in seconds)
+
+        // var result = driver.executableQuery("RETURN point({x: 1.23, y: 4.56, z: 7.89}) AS point")
+        //         .withConfig(QueryConfig.builder().withDatabase("neo4j").build())
+        //         .execute();
+        // var point = result.records().get(0).get("point");
+        // System.out.println(point);  // Point{srid=9157, x=2.3, y=4.5, z=2.0}
+        // System.out.println(point.asPoint().x() + ", " + point.asPoint().y() + ", " + point.asPoint().z());  // 2.3
+
+        // var location2d = Values.point(4326, -0.118092, 51.509865);
+        // System.out.println(location2d.asPoint().x() + ", " + 
+        //                     location2d.asPoint().y() + ", " + 
+        //                     location2d.asPoint().srid());
+        //                     // -0.118092, 51.509865, 4326
+
+        // var location3d = Values.point(4979, -0.086500, 51.504501, 310);
+        // System.out.println(location3d.asPoint().x() + ", " + 
+        //                     location3d.asPoint().y() + ", " + 
+        //                     location3d.asPoint().z() + ", " + 
+        //                     location3d.asPoint().srid());
+        //                     // -0.0865, 51.504501, 310.0, 4979
+
+        // var result = driver.executableQuery("""
+        //     RETURN point({
+        //         latitude: 51.5,
+        //         longitude: -0.118,
+        //         height: 100
+        //     }) AS point
+        // """)
+        // .execute();
+
+        // var point = result.records().get(0).get("point");
+        // var longitude = point.asPoint().x();
+        // var latitude = point.asPoint().y();
+        // var height = point.asPoint().z();
+        // var srid = point.asPoint().srid();
+        // System.out.println(longitude + ", " +
+        //                     latitude + ", " + 
+        //                     height + ", " +
+        //                     srid); // -0.118, 51.5, 100.0, 4979
+        // System.out.println(point.asPoint()); // Point{srid=4979, x=-0.118, y=51.5, z=100.0}
+
+        // // Create two points
+        // var point1 = Values.point(7203, 1.23, 4.56);
+        // var point2 = Values.point(7203, 2.34, 5.67);
+
+        // var result = driver.executableQuery("""
+        //         RETURN point.distance($p1, $p2) AS distance
+        //         """)
+        //         .withParameters(
+        //             Map.of("p1", point1, "p2", point2))
+        //         .execute();
+
+        // var distance = result.records().get(0).get("distance").asDouble();
+        // System.out.println(distance);  // 1.5697770542341356
+
+        // try (var session = driver.session()) {
+        //     // Run a Cypher statement
+        //     var result = session.run("MATCH (n) RETURN n LIMIT 10");
+        //     result.forEachRemaining(record -> {
+        //         System.out.println(record.get("n").asNode().asMap());
+        //     });
+        // } catch (Neo4jException e) {
+        //     e.code(); // Outputs the error code
+        //     e.getMessage(); // Outputs the error message
+        //     e.gqlStatus(); // Outputs the GQL status
+        //     e.printStackTrace(); // Outputs full stack trace
+        // }
+
+        // var name = "Test Name";
+        // var email = "test@test.com";
+        
+        // try (var session = driver.session()) {
+        //     var result = session.run("""
+        //         CREATE (u:User {name: $name, email: $email})
+        //         RETURN u;
+        //     """, 
+        //     Values.parameters("name", name, "email", email));
+
+        // } catch (Neo4jException e) {
+        //     e.printStackTrace(); 
+        //     // org.neo4j.driver.exceptions.ClientException:
+        //         // Node(5) already exists with label `User` 
+        //         // and property `email` = 'test@test.com'
+        // }
 
         driver.close();
 
