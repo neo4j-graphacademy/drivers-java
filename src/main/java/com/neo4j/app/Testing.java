@@ -7,6 +7,7 @@ import java.util.List;
 import org.neo4j.driver.summary.ResultSummary;
 // Import Neo4j
 import org.neo4j.driver.GraphDatabase;
+import org.neo4j.driver.Driver;
 import org.neo4j.driver.QueryConfig;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Result;
@@ -17,6 +18,7 @@ import org.neo4j.driver.RoutingControl;
 import org.neo4j.driver.TransactionContext;
 import org.neo4j.driver.Values;
 import org.neo4j.driver.exceptions.Neo4jException;
+import org.neo4j.driver.exceptions.ClientException;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
 import org.neo4j.driver.types.Path;
@@ -285,18 +287,28 @@ public class Testing {
         // System.out.println(point);  // Point{srid=9157, x=2.3, y=4.5, z=2.0}
         // System.out.println(point.asPoint().x() + ", " + point.asPoint().y() + ", " + point.asPoint().z());  // 2.3
 
+        // Double longitude = 55.296233;
+        // Double latitude = 25.276987;
+        // Double height = 828.0;
+
+        // var location3d = Values.point(
+        //     4979, 
+        //     longitude, latitude, height
+        // );
+
+
         // var location2d = Values.point(4326, -0.118092, 51.509865);
         // System.out.println(location2d.asPoint().x() + ", " + 
         //                     location2d.asPoint().y() + ", " + 
         //                     location2d.asPoint().srid());
         //                     // -0.118092, 51.509865, 4326
 
-        // var location3d = Values.point(4979, -0.086500, 51.504501, 310);
+        // // var location3d = Values.point(4979, -0.086500, 51.504501, 310);
         // System.out.println(location3d.asPoint().x() + ", " + 
         //                     location3d.asPoint().y() + ", " + 
         //                     location3d.asPoint().z() + ", " + 
         //                     location3d.asPoint().srid());
-        //                     // -0.0865, 51.504501, 310.0, 4979
+                            // -0.0865, 51.504501, 310.0, 4979
 
         // var result = driver.executableQuery("""
         //     RETURN point({
@@ -362,30 +374,64 @@ public class Testing {
         //         // and property `email` = 'test@test.com'
         // }
 
+        var result = createUser(driver, "Test User", "email: test_user@example.com");
+
+        System.out.println(result);
+
         driver.close();
 
     }
 
-    public static ResultSummary getAnswer(TransactionContext tx, String answer) {
-        var result = tx.run("RETURN $answer AS answer", Map.of("answer", answer));
-        return result.consume();
+    public static String createUser(Driver driver, String name, String email) {
+        try (var session = driver.session()) {
+            session.executeWrite(
+                tx -> addUser(
+                    tx,
+                    "Test User",
+                    "test_user@example.com"
+                    )
+                );
+
+            return "{\"success\": true, \"message\": \"User created successfully\"}";
+
+        } catch (ClientException e) {
+
+            return "{\"success\": false, \"message\": \"User already exists\"}";
+
+        }
     }
 
-    public static List<Record> getCheapestFlights(
-        TransactionContext tx, 
-        String date, 
-        String origin, 
-        String destination) {
+    public static ResultSummary addUser(TransactionContext tx, String name, String email) {
 
         var result = tx.run("""
-            MATCH (origin:Airport)<-[:ORIGIN]-(f:Flight)-[:DESTINATION]->(destination:Airport),
-                (f)-[:OPERATED_BY]->(operator:Airline)
-            WHERE origin.name = $origin AND destination.name = $destination AND f.date = $date
-            RETURN f.price AS price, operator.name AS operator
-            """, Map.of("date", date, "origin", origin, "destination", destination));
+        CREATE (u:User {name: $name, email: $email}) 
+        RETURN u
+        """, Map.of("name", name, "email", email));
 
-        return result.list();
+        return result.consume();
+        
     }
+
+    // public static ResultSummary getAnswer(TransactionContext tx, String answer) {
+    //     var result = tx.run("RETURN $answer AS answer", Map.of("answer", answer));
+    //     return result.consume();
+    // }
+
+    // public static List<Record> getCheapestFlights(
+    //     TransactionContext tx, 
+    //     String date, 
+    //     String origin, 
+    //     String destination) {
+
+    //     var result = tx.run("""
+    //         MATCH (origin:Airport)<-[:ORIGIN]-(f:Flight)-[:DESTINATION]->(destination:Airport),
+    //             (f)-[:OPERATED_BY]->(operator:Airline)
+    //         WHERE origin.name = $origin AND destination.name = $destination AND f.date = $date
+    //         RETURN f.price AS price, operator.name AS operator
+    //         """, Map.of("date", date, "origin", origin, "destination", destination));
+
+    //     return result.list();
+    // }
 
     // public static int createPerson(TransactionContext tx, String name, int age) {
     //     var result = tx.run("""
@@ -395,6 +441,7 @@ public class Testing {
     //     return result.list().size();
     // }
 
+    
     // public static void transferFunds(TransactionContext tx, String fromAccount, String toAccount, double amount) {
     //     tx.run(
     //         "MATCH (a:Account {id: $from_}) SET a.balance = a.balance - $amount",
