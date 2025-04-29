@@ -24,7 +24,7 @@
 			"openFiles": [
 				"SETUP.md",
 				"src/main/resources/example.properties",
-				"test/java/com/neo4j/app/AppTest.java"
+				"src/main/java/com/neo4j/app/App.java"
 				]
 		},
 		"vscode": {
