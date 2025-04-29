@@ -6,8 +6,12 @@ For a complete walkthrough of this repository, link:https://graphacademy.neo4j.c
 
 == Install
 
+[source, bash]
 ./mvnw clean install -U -DskipTests
+
+Create a ``
 
 == Run
 
+[source, bash]
 ./mvnw compile exec:java -Dexec.mainClass="com.neo4j.app.App"

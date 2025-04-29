@@ -1,5 +1,5 @@
 {
-	"name": "Building Neo4j Applications with Spring Data Neo4j",
+	"name": "Using Neo4j with Java",
 	"image": "mcr.microsoft.com/devcontainers/java:1-21-bullseye",
 	"features": {
 		"ghcr.io/devcontainers/features/java:1": {
@@ -23,8 +23,8 @@
 		"codespaces": {
 			"openFiles": [
 				"SETUP.md",
-				"src/main/resources/application.properties",
-				"test/java/com/example/appspringdata/AppStringDataApplicationTests.java"
+				"src/main/resources/example.properties",
+				"test/java/com/neo4j/app/AppTest.java"
 				]
 		},
 		"vscode": {
