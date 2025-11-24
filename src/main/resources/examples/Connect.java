@@ -2,6 +2,7 @@ package com.neo4j.app;
 
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.AuthTokens;
+import org.neo4j.driver.QueryConfig;
 
 public class Connect {
     public static void main(String[] args) {
@@ -12,16 +13,20 @@ public class Connect {
                 System.getProperty("NEO4J_URI"), // <1>
                 AuthTokens.basic(
                     System.getProperty("NEO4J_USERNAME"), // <2>
-                    System.getProperty("NEO4J_PASSWORD")) 
+                    System.getProperty("NEO4J_PASSWORD"))
             );
 
-        // Verify the connection 
+        // Verify the connection
         driver.verifyConnectivity();
 
         // Execute a Cypher query
         var result = driver.executableQuery(
             "RETURN COUNT {()} AS count"
-            ).execute();
+            )
+            .withConfig(QueryConfig.builder()
+                .withDatabase(System.getProperty("NEO4J_DATABASE"))
+                .build())
+            .execute();
 
         // Parse the results
         var records = result.records();
