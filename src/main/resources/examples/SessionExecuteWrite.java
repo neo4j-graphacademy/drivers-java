@@ -5,6 +5,7 @@ import java.util.Map;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.TransactionContext;
+import org.neo4j.driver.SessionConfig;
 
 public class SessionExecuteWrite {
     public static void main(String[] args) {
@@ -15,16 +16,16 @@ public class SessionExecuteWrite {
                 System.getProperty("NEO4J_URI"), // <1>
                 AuthTokens.basic(
                     System.getProperty("NEO4J_USERNAME"), // <2>
-                    System.getProperty("NEO4J_PASSWORD")) 
+                    System.getProperty("NEO4J_PASSWORD"))
             );
 
-        // Verify the connection 
+        // Verify the connection
         driver.verifyConnectivity();
 
         // Create session and execute
         String name = "Martin";
         int age = 67;
-        try (var session = driver.session()) {
+        try (var session = driver.session(SessionConfig.forDatabase(System.getProperty("NEO4J_DATABASE")))) {
             var count = session.executeWrite(tx -> createPerson(tx, name, age));
             System.out.println(
                 String.format("%s nodes added.", count)

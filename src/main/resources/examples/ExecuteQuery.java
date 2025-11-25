@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.AuthTokens;
+import org.neo4j.driver.QueryConfig;
 
 public class ExecuteQuery {
     public static void main(String[] args) {
@@ -14,10 +15,10 @@ public class ExecuteQuery {
                 System.getProperty("NEO4J_URI"), // <1>
                 AuthTokens.basic(
                     System.getProperty("NEO4J_USERNAME"), // <2>
-                    System.getProperty("NEO4J_PASSWORD")) 
+                    System.getProperty("NEO4J_PASSWORD"))
             );
 
-        // Verify the connection 
+        // Verify the connection
         driver.verifyConnectivity();
 
         // Execute a Cypher query
@@ -29,6 +30,9 @@ public class ExecuteQuery {
 
         var result = driver.executableQuery(cypher)
             .withParameters(Map.of("name", name))
+            .withConfig(QueryConfig.builder()
+                .withDatabase(System.getProperty("NEO4J_DATABASE"))
+                .build())
             .execute();
 
         // Parse the results

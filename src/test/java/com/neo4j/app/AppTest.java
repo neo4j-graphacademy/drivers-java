@@ -23,6 +23,7 @@ public class AppTest {
         assertTrue(System.getProperty("NEO4J_URI") != null, "NEO4J_URI is null");
         assertTrue(System.getProperty("NEO4J_USERNAME") != null, "NEO4J_USERNAME is null");
         assertTrue(System.getProperty("NEO4J_PASSWORD") != null, "NEO4J_PASSWORD is null");
+        assertTrue(System.getProperty("NEO4J_DATABASE") != null, "NEO4J_DATABASE is null");
     }
 
     @Test

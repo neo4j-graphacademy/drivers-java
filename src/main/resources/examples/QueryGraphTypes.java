@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.AuthTokens;
+import org.neo4j.driver.QueryConfig;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
 import org.neo4j.driver.types.Path;
@@ -17,10 +18,10 @@ public class QueryGraphTypes {
                 System.getProperty("NEO4J_URI"), // <1>
                 AuthTokens.basic(
                     System.getProperty("NEO4J_USERNAME"), // <2>
-                    System.getProperty("NEO4J_PASSWORD")) 
+                    System.getProperty("NEO4J_PASSWORD"))
             );
 
-        // Verify the connection 
+        // Verify the connection
         driver.verifyConnectivity();
 
         // Execute a Cypher query
@@ -32,6 +33,9 @@ public class QueryGraphTypes {
 
         var result = driver.executableQuery(cypher)
             .withParameters(Map.of("title", title))
+            .withConfig(QueryConfig.builder()
+                .withDatabase(System.getProperty("NEO4J_DATABASE"))
+                .build())
             .execute();
 
         // Parse the graph types
@@ -42,25 +46,25 @@ public class QueryGraphTypes {
             Path path = r.get("path").asPath();
 
             System.out.println(
-                String.format("Element ID %s\n Labels %s\n Name %s", 
-                    node.elementId(), 
-                    node.labels(), 
+                String.format("Element ID %s\n Labels %s\n Name %s",
+                    node.elementId(),
+                    node.labels(),
                     node.get("name")
                 )
             );
 
             System.out.println(
-                String.format("Element ID %s\n Type %s\n Role %s", 
-                    actedIn.elementId(), 
-                    actedIn.type(), 
+                String.format("Element ID %s\n Type %s\n Role %s",
+                    actedIn.elementId(),
+                    actedIn.type(),
                     actedIn.get("role")
                 )
             );
 
             System.out.println(
-                String.format("Start Node ID %s\n End Node ID %s\n Length %s", 
-                    path.start().elementId(), 
-                    path.end().elementId(), 
+                String.format("Start Node ID %s\n End Node ID %s\n Length %s",
+                    path.start().elementId(),
+                    path.end().elementId(),
                     path.length()
                 )
             );
