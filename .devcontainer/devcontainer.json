@@ -1,6 +1,6 @@
 {
 	"name": "Using Neo4j with Java",
-	"image": "mcr.microsoft.com/devcontainers/java:1-21-bullseye",
+	"image": "mcr.microsoft.com/devcontainers/java:3-21-trixie",
 	"features": {
 		"ghcr.io/devcontainers/features/java:1": {
 			"installMaven": true,
